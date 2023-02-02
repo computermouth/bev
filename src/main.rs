@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy_embedded_assets::EmbeddedAssetPlugin;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use bevy_scene_hook::{HookPlugin, HookedSceneBundle, SceneHook};
 
@@ -45,11 +46,10 @@ fn transform_lit(mut query: Query<&mut Transform, With<Light>>) {
         if i > 1 {
             println!("???");
         }
-        
+
         let e = Quat::from_euler(EulerRot::XYZ, 0.05, 0.05, 0.05);
-        
+
         c.translate_around(Vec3::new(0., 0., 0.), e);
-        
     }
 }
 
@@ -59,21 +59,26 @@ fn transform_cub(mut cubes: Query<&mut Transform, With<Cube>>) {
             println!("???");
         }
         let axis = Vec3::new(0.5, 1., 2.);
-        c.rotate_axis(axis,0.005);
+        c.rotate_axis(axis, 0.005);
     }
 }
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins.set(WindowPlugin {
-            window: WindowDescriptor {
-                title: "I am a window!".to_string(),
-                width: 500.,
-                height: 300.,
-                ..default()
-            },
-            ..default()
-        }))
+        .add_plugins(
+            DefaultPlugins
+                .set(WindowPlugin {
+                    window: WindowDescriptor {
+                        title: "I am a window!".to_string(),
+                        width: 500.,
+                        height: 300.,
+                        ..default()
+                    },
+                    ..default()
+                })
+                .build()
+                .add_before::<bevy::asset::AssetPlugin, _>(EmbeddedAssetPlugin),
+        )
         .add_plugin(HookPlugin)
         .add_plugin(WorldInspectorPlugin)
         // .insert_resource(AmbientLight {
